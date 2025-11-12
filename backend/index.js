@@ -55,7 +55,8 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(frontendDistPath));
 
   // Handle React routing, return all requests to React app
-  app.get("*", (req, res) => {
+  // Express 5 compatible catch-all route
+  app.use((req, res) => {
     res.sendFile(path.join(frontendDistPath, "index.html"));
   });
 }
