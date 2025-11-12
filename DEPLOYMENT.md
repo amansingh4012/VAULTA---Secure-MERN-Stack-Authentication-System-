@@ -73,7 +73,7 @@ git push origin main
    Branch: main
    Root Directory: (leave empty)
    Runtime: Node
-   Build Command: npm run build
+   Build Command: chmod +x build.sh && ./build.sh
    Start Command: npm start
    ```
 
@@ -89,25 +89,19 @@ git push origin main
    | `MONGO_URI` | Your MongoDB Atlas connection string |
    | `REDIS_URL` | Your Redis Cloud connection string |
    | `PORT` | `5000` |
-   | `FRONTEND_URL` | Your Render URL (e.g., `https://vaulta.onrender.com`) |
    | `JWT_SECRET` | Generate a long random string (min 32 chars) |
    | `REFRESH_SECRET` | Generate another long random string (min 32 chars) |
    | `SMTP_USER` | Your Gmail address |
    | `SMTP_PASSWORD` | Your Gmail App Password |
    | `APP_NAME` | `Vaulta` |
 
-   **Important**: For `FRONTEND_URL`, use your Render service URL. After deployment, update this value.
+   **Note**: No need for `FRONTEND_URL` since frontend and backend are served together from the same domain!
 
 6. **Deploy**
    - Click **"Create Web Service"**
    - Render will automatically build and deploy your app
    - Wait 5-10 minutes for the first deployment
-
-7. **Update FRONTEND_URL**
-   - After deployment, copy your service URL (e.g., `https://vaulta.onrender.com`)
-   - Go to **Environment** tab
-   - Update `FRONTEND_URL` with your actual URL
-   - Render will automatically redeploy
+   - Your app will be available at your Render URL (e.g., `https://vaulta.onrender.com`)
 
 ---
 
@@ -138,7 +132,7 @@ git push origin main
 - Check for any errors
 
 ### 3. Update CORS Settings (if needed)
-If you have CORS issues, verify `FRONTEND_URL` in environment variables matches your Render URL.
+If you have CORS issues in development mode, ensure `FRONTEND_URL` in your local `.env` is set to `http://localhost:5173`. In production, CORS is automatically configured for same-origin requests.
 
 ---
 
@@ -164,6 +158,50 @@ If you have CORS issues, verify `FRONTEND_URL` in environment variables matches 
 
 ## 🐛 Troubleshooting
 
+### Build Fails - Cannot Find Package
+**Error**: `Cannot find package '@vitejs/plugin-react'`
+
+**Root Cause**: When `NODE_ENV=production`, npm skips `devDependencies` during installation. However, Vite and its plugins (like `@vitejs/plugin-react`) are required to build the frontend, even though they're in `devDependencies`.
+
+**Solution**: The `build.sh` script has been updated to:
+1. Set `NODE_ENV=development` during dependency installation
+2. Perform a clean install of all dependencies (including dev dependencies)
+3. Verify that `@vitejs/plugin-react` is installed before building
+4. Automatically install it if missing
+
+**What the script does**:
+1. Removes old `node_modules` and lock files
+2. Performs fresh `npm install` with `NODE_ENV=development` for both backend and frontend
+3. Verifies critical build dependencies are present
+4. Builds the frontend with all dependencies available
+
+**If still failing**:
+1. Clear Render's build cache: Settings → Build & Deploy → Clear Build Cache
+2. Check that `build.sh` has execute permissions
+3. Verify the build command in Render is: `chmod +x build.sh && ./build.sh`
+4. Check build logs for the exact error location
+5. Ensure `package.json` files are valid and committed
+6. Try manually redeploying from Render dashboard
+
+### PathError - Missing Parameter Name
+**Error**: `PathError [TypeError]: Missing parameter name at index 1: *`
+
+**Solution**: This was caused by Express 5's routing changes. The wildcard route syntax has been updated to use middleware instead of `app.get("*", ...)`. This is already fixed in the codebase.
+
+### Failed to Connect (Redis/MongoDB)
+**Error**: `Failed to connect`
+
+**Possible causes**:
+1. **Missing environment variables** - Ensure `MONGO_URI` and `REDIS_URL` are set in Render
+2. **Incorrect connection strings** - Verify MongoDB and Redis URLs are correct
+3. **Network issues** - Check if MongoDB Atlas allows connections from all IPs (0.0.0.0/0)
+
+**Solution**:
+- Check Render logs for specific connection errors
+- Verify environment variables in Render dashboard
+- Test MongoDB connection string locally
+- Ensure Redis URL doesn't have `redis-cli -u` prefix
+
 ### Build Fails
 - Check build logs in Render dashboard
 - Ensure all dependencies are in `package.json`
@@ -180,6 +218,21 @@ If you have CORS issues, verify `FRONTEND_URL` in environment variables matches 
 - Check backend logs for email errors
 
 ### 404 on Routes
+**Error**: `ENOENT: no such file or directory, stat '/opt/render/project/src/frontend/dist/index.html'`
+
+**Possible causes**:
+1. Frontend build failed silently
+2. Build output directory not created
+3. Vite build configuration issue
+
+**Solution**:
+- Check build logs to ensure frontend build completed successfully
+- Look for "Building Frontend" and "Build Complete" messages
+- Verify `frontend/dist` directory was created
+- The updated `build.sh` now includes verification steps
+- Ensure `vite.config.js` has correct `outDir` configuration
+
+### 404 on Routes (General)
 - Ensure frontend routing is handled correctly
 - Check `backend/index.js` has the catch-all route for production
 

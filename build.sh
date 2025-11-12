@@ -14,7 +14,8 @@ cd backend
 pwd
 # Clean install to avoid cache issues
 rm -rf node_modules package-lock.json 2>/dev/null || true
-npm install
+# Force install all dependencies (production mode skips devDeps by default)
+NODE_ENV=development npm install
 cd ..
 
 echo ""
@@ -23,7 +24,16 @@ cd frontend
 pwd
 # Clean install to avoid cache issues
 rm -rf node_modules package-lock.json 2>/dev/null || true
-npm install
+# Force install all dependencies including devDependencies (needed for Vite build)
+NODE_ENV=development npm install
+
+echo ""
+echo "=== Verifying Vite Plugin Installation ==="
+if [ ! -d "node_modules/@vitejs/plugin-react" ]; then
+  echo "ERROR: @vitejs/plugin-react not installed!"
+  echo "Attempting to install it directly..."
+  npm install @vitejs/plugin-react --save-dev
+fi
 
 echo ""
 echo "=== Building Frontend ==="
