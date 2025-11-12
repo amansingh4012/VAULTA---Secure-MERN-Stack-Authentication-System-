@@ -118,7 +118,25 @@ vaulta/
         └── App.jsx         # Main app & routing
 ```
 
-## 📜 License
+## � Deployment
+
+### Deploy to Render (Single Service)
+
+This project is configured to deploy frontend and backend together as a single service on Render.
+
+**Quick Deploy:**
+1. Push code to GitHub
+2. Connect to Render
+3. Set environment variables
+4. Deploy!
+
+📖 **Full deployment guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md)  
+✅ **Quick checklist**: See [DEPLOY_CHECKLIST.md](./DEPLOY_CHECKLIST.md)
+
+**Build Command**: `npm run build`  
+**Start Command**: `npm start`
+
+## �📜 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 

@@ -1,0 +1,32 @@
+{
+  "name": "vaulta",
+  "version": "1.0.0",
+  "description": "Secure MERN Stack Authentication System",
+  "main": "backend/index.js",
+  "type": "module",
+  "scripts": {
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "install-all": "npm run install-backend && npm run install-frontend",
+    "build-frontend": "cd frontend && npm run build",
+    "start": "cd backend && node index.js",
+    "dev-backend": "cd backend && npm run dev",
+    "dev-frontend": "cd frontend && npm run dev",
+    "build": "npm run install-all && npm run build-frontend"
+  },
+  "keywords": [
+    "mern",
+    "authentication",
+    "jwt",
+    "otp",
+    "security",
+    "redis",
+    "mongodb"
+  ],
+  "author": "Aman Kumar Singh",
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

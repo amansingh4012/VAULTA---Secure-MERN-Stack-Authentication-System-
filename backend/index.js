@@ -4,8 +4,13 @@ import connectDb from "./config/db.js";
 import { createClient } from "redis";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 await connectDb();
 
@@ -43,6 +48,17 @@ import userRoutes from "./routes/user.js";
 
 //using routes
 app.use("/api/v1", userRoutes);
+
+// Serve static files from React frontend app in production
+if (process.env.NODE_ENV === "production") {
+  const frontendDistPath = path.join(__dirname, "../frontend/dist");
+  app.use(express.static(frontendDistPath));
+
+  // Handle React routing, return all requests to React app
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 

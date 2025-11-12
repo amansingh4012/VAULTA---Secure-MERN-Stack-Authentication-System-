@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const server = "http://localhost:5000";
+// Use environment variable or fallback to production URL
+const server = import.meta.env.VITE_API_URL || "";
 
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;
