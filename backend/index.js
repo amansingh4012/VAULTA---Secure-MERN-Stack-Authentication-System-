@@ -35,13 +35,19 @@ const app = express();
 //middlewares
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  })
-);
+
+// CORS configuration
+// In production (single deployment), allow same origin
+// In development, allow localhost:5173
+const corsOptions = {
+  origin: process.env.NODE_ENV === "production" 
+    ? true  // Allow same origin in production
+    : process.env.FRONTEND_URL || "http://localhost:5173",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+};
+
+app.use(cors(corsOptions));
 
 //importing routes
 import userRoutes from "./routes/user.js";
