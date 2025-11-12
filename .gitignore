@@ -8,10 +8,11 @@
 .env
 .env.local
 .env.development
-.env.production
 .env.test
 *.env
 !.env.example
+# Allow frontend production env (contains only VITE_API_URL which is safe)
+!frontend/.env.production
 
 # ===========================
 # Dependencies

@@ -7,7 +7,10 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config();
+// Load .env file only in development (production uses Render env vars)
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
