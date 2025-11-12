@@ -124,9 +124,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 
 ## 👤 Author
 
-**Sahil kumar**
+**Aman Kumar Singh**
 
-* GitHub: [@SahilKumar94](https://github.com/Sahilkumar94)
+* GitHub: [@amansingh4012](https://github.com/amansingh4012)
 ---
 
 
