@@ -1,7 +1,12 @@
 import axios from "axios";
 
-// Use environment variable or fallback to production URL
+// Use environment variable or fallback to production URL (empty string = same origin)
 const server = import.meta.env.VITE_API_URL || "";
+
+// Debug log in development
+if (import.meta.env.DEV) {
+  console.log("API Base URL:", server || "(same origin)");
+}
 
 const getCookie = (name) => {
   const value = `; ${document.cookie}`;

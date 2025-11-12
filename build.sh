@@ -36,8 +36,32 @@ if [ ! -d "node_modules/@vitejs/plugin-react" ]; then
 fi
 
 echo ""
+echo "=== Verifying Environment Configuration ==="
+echo "Checking if .env.production exists..."
+if [ -f ".env.production" ]; then
+  echo "✅ .env.production found"
+  echo "Contents:"
+  cat .env.production
+else
+  echo "⚠️  .env.production not found, creating it..."
+  echo "VITE_API_URL=" > .env.production
+  echo "✅ Created .env.production"
+fi
+
+echo ""
 echo "=== Building Frontend ==="
-npm run build
+# Build in production mode to use .env.production
+NODE_ENV=production npm run build
+
+echo ""
+echo "=== Checking Built Files for API URL ==="
+# Check if the built JS contains localhost (it shouldn't)
+if grep -r "localhost:5000" dist/ 2>/dev/null; then
+  echo "⚠️  WARNING: Found localhost:5000 in built files!"
+  echo "This indicates the build didn't use .env.production correctly"
+else
+  echo "✅ No localhost:5000 found in built files (good!)"
+fi
 
 echo ""
 echo "=== Verifying Build Output ==="
